@@ -1,10 +1,19 @@
+import { StatusBar } from '@/src/components/StatusBar'
+import { useLoadStatusStore } from '@/src/store/loadStatusStore'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Button, StyleSheet, Text, View } from 'react-native'
 
 export default function AboutScreen () {
+  const { startTracking, completeLoad } = useLoadStatusStore()
+
   return (
     <View style={styles.container}>
+      <StatusBar />
       <Text style={styles.title}>About Screen</Text>
+      <View style={styles.buttonContainer}>
+        <Button title='Start Tracking' onPress={startTracking} />
+        <Button title='Complete Load' onPress={completeLoad} color='green' />
+      </View>
       <Text style={styles.content}>Information about the app goes here.</Text>
       <Text style={styles.content}>Version: 1.0.0</Text>
     </View>
@@ -14,16 +23,23 @@ export default function AboutScreen () {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#f0f0f0'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 20,
     color: '#333'
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+    width: '100%'
   },
   content: {
     fontSize: 16,
