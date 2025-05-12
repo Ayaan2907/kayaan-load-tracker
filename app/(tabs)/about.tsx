@@ -1,49 +1,35 @@
-import { StatusBar } from '@/src/components/StatusBar'
-import { useLoadStatusStore } from '@/src/store/loadStatusStore'
+import { ScreenWrapper } from '@/components/ScreenWrapper'
 import React from 'react'
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 export default function AboutScreen () {
-  const { startTracking, completeLoad } = useLoadStatusStore()
-
   return (
-    <View style={styles.container}>
-      <StatusBar />
-      <Text style={styles.title}>About Screen</Text>
-      <View style={styles.buttonContainer}>
-        <Button title='Start Tracking' onPress={startTracking} />
-        <Button title='Complete Load' onPress={completeLoad} color='green' />
+    <ScreenWrapper>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>About Screen</Text>
+        <Text style={styles.content}>Information about the app goes here.</Text>
+        <Text style={styles.content}>Version: 1.0.0</Text>
       </View>
-      <Text style={styles.content}>Information about the app goes here.</Text>
-      <Text style={styles.content}>Version: 1.0.0</Text>
-    </View>
+    </ScreenWrapper>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  contentContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#f0f0f0'
+    justifyContent: 'center'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 20,
     color: '#333'
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 20,
-    width: '100%'
   },
   content: {
     fontSize: 16,
     color: '#555',
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 10
   }
 }) 

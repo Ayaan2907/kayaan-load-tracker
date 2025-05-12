@@ -5,7 +5,6 @@ import { useLoadStatusStore } from '@/src/store/loadStatusStore';
 export function StatusBar () {
   const { statuses, currentStatusIndex, isTracking } = useLoadStatusStore()
 
-  // Don't render anything if tracking is not active
   if (!isTracking || currentStatusIndex < 0) {
       return null
   }
