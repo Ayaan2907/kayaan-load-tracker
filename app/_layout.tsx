@@ -25,7 +25,7 @@ export default function RootLayout() {
     if (!isLoading) {
       console.log('Auth check complete. isAuthenticated:', isAuthenticated); 
       if (isAuthenticated) {
-        router.replace('/(tabs)'); // Use replace to avoid back button to login
+        router.replace('/home'); // Use replace to avoid back button to login
       } else {
         router.replace('/login');
       }
