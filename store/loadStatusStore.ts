@@ -1,9 +1,10 @@
-import { create } from 'zustand'
 import { LOAD_STATUSES, STATUS_UPDATE_INTERVAL } from '@/constants/StatusConstants'
+import { create } from 'zustand'
 
 interface LoadStatusState {
   statuses: readonly string[] // Use readonly tuple from constants
-  currentStatusIndex: number  // Index of the current status
+  currentStatusIndex: number
+  currentStatusProgress: number
   isTracking: boolean 
   intervalId: number | null 
   startTracking: () => void
@@ -14,43 +15,61 @@ interface LoadStatusState {
 export const useLoadStatusStore = create<LoadStatusState>((set, get) => ({
   statuses: LOAD_STATUSES,
   currentStatusIndex: -1,
+  currentStatusProgress: 0,
   isTracking: false,
   intervalId: null,
 
   startTracking: () => {
     const currentIntervalId = get().intervalId
     // Clear any existing interval first
-    if (typeof currentIntervalId === 'number') { // Ensure it's a number before clearing
+    if (typeof currentIntervalId === 'number') {
       clearInterval(currentIntervalId)
     }
     // Set initial state and start new interval
-    set({ isTracking: true, currentStatusIndex: 0 }) // Start from the first status
-    const newIntervalId = setInterval(get()._nextStatus, STATUS_UPDATE_INTERVAL) // get()._nextStatus to ensure fresh reference
-    set({ intervalId: newIntervalId as number }) // Store as number
+    set({ isTracking: true, currentStatusIndex: 0, currentStatusProgress: 0 })
+    
+    const newIntervalId = setInterval(() => {
+      const state = get()
+      if (!state.isTracking) return
+      
+      // Increment progress
+      set((state) => {
+        const progressStep = 1 / (STATUS_UPDATE_INTERVAL / 100) // Progress step size
+        let newProgress = state.currentStatusProgress + progressStep
+        
+        // If progress completes for current status
+        if (newProgress >= 1) {
+          newProgress = 0
+          get()._nextStatus() // Move to next status
+        }
+        
+        return { currentStatusProgress: newProgress }
+      })
+    }, 100) 
+    
+    set({ intervalId: newIntervalId as number })
     console.log('Tracking started, interval ID:', newIntervalId)
   },
 
   _nextStatus: () => {
-      set((state) => {
-        //  Check if we are already at the last status
+    set((state) => {
+      // Check if we are already at the last status
       if (state.currentStatusIndex === state.statuses.length - 1) {
         console.log('Reached end of statuses. Auto-completing.')
-        if (typeof state.intervalId === 'number') { // Ensure it's a number
+        if (typeof state.intervalId === 'number') {
           clearInterval(state.intervalId)
         }
         return {
           isTracking: false,
           currentStatusIndex: -1,
+          currentStatusProgress: 0,
           intervalId: null
         }
       }
-      if (state.currentStatusIndex === null || state.currentStatusIndex === -1) {
-          console.warn('_nextStatus called with invalid index:', state.currentStatusIndex);
-          return state; // Should not proceed if index is invalid
-      }
+      
       const nextIndex = state.currentStatusIndex + 1
       console.log(`Updating status index: ${state.currentStatusIndex} -> ${nextIndex}`)
-      return { currentStatusIndex: nextIndex }
+      return { currentStatusIndex: nextIndex, currentStatusProgress: 0 }
     })
   },
 
@@ -61,7 +80,7 @@ export const useLoadStatusStore = create<LoadStatusState>((set, get) => ({
       console.log('Manual completion. Tracking interval cleared:', currentIntervalId)
     }
     console.log('Load completed manually, hiding status bar.')
-    set({ isTracking: false, currentStatusIndex: -1, intervalId: null })
+    set({ isTracking: false, currentStatusIndex: -1, currentStatusProgress: 0, intervalId: null })
   }
 }))
 
