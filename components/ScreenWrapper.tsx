@@ -1,6 +1,6 @@
 import { useLoadStatusStore } from '@/store/loadStatusStore';
 import React from 'react';
-import { Button, StyleSheet, View, Platform } from 'react-native';
+import { Button, Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from './StatusBar';
 
@@ -16,16 +16,16 @@ export function ScreenWrapper ({ children }: ScreenWrapperProps) {
   const bottomPadding = Platform.OS === 'ios' ? insets.bottom + 50 : 15;
 
   return (
-    <View style={styles.wrapper}>
+    <View className="flex-1 bg-gray-100 dark:bg-neutral-800">
+      <View className="flex-1 absolute top-0 left-0 right-0 z-10">
       <StatusBar />
-      <View style={styles.content}>
+      </View>
+      <View className="flex-1">
         {children}
       </View>
       <View 
-        style={[
-          styles.buttonContainer,
-          { paddingBottom: bottomPadding }
-        ]}
+        style={{ paddingBottom: bottomPadding }}
+        className="flex-row justify-center items-center min-h-[60px] dark:bg-neutral-800"
       >
         {!isTracking && (
             <Button title='Start Tracking' onPress={startTracking} />
@@ -37,19 +37,3 @@ export function ScreenWrapper ({ children }: ScreenWrapperProps) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: '#f0f0f0' // Keep consistent background
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 60,
-  },
-  content: {
-    flex: 1,
-  }
-})

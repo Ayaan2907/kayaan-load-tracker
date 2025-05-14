@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
 import { useAuthStore } from '@/store/authStore';
+import React from 'react';
+import { Button, Text, View } from 'react-native';
 
 // temporary login screen
 // TODO: improve the whole UI 
@@ -13,23 +13,9 @@ export default function LoginScreen () {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login Screen</Text>
+    <View className="flex-1 justify-center items-center p-5 bg-gray-100 dark:bg-neutral-900">
+      <Text className="text-2xl font-bold mb-5 text-gray-800 dark:text-gray-100">Login Screen</Text>
       <Button title='Login' onPress={handleLogin} />
     </View>
   )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20
-  }
-}) 
+} 

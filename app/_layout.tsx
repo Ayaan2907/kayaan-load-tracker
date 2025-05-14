@@ -1,8 +1,8 @@
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuthStore } from '@/store/authStore';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../global.css';
@@ -13,12 +13,13 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { isAuthenticated, isLoading, checkAuthStatus } = useAuthStore();
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  
+  // Get colorScheme from NativeWind's hook. This will reflect the system theme.
+  const { colorScheme: nativeWindColorScheme } = useNativeWindColorScheme();
 
-  // Checking authentication status when the app loads
   useEffect(() => {
     checkAuthStatus();
-  }, [checkAuthStatus]); // Depend on the checkAuthStatus function instance
+  }, [checkAuthStatus]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -31,21 +32,24 @@ export default function RootLayout() {
       // Hiding the splash screen now that we are ready to render
       SplashScreen.hideAsync();
     }
-  }, [isLoading, isAuthenticated, router]); // Re-run when loading state, auth state, font state or router changes
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) {
     return null;
   }
 
+  // Determine the theme for React Navigation and ExpoStatusBar based on NativeWind's colorScheme
+  const resolvedTheme = nativeWindColorScheme;
+
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={resolvedTheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar style="auto" />
+        <ExpoStatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
       </ThemeProvider>
     </SafeAreaProvider>
   );
