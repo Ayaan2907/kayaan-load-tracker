@@ -1,66 +1,163 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useLoadStatusStore } from '@/src/store/loadStatusStore';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { useLoadStatusStore } from '@/store/loadStatusStore';
 
-export function StatusBar () {
-  const { statuses, currentStatusIndex, isTracking } = useLoadStatusStore()
-
-  if (!isTracking || currentStatusIndex < 0) {
-      return null
+export function StatusBar() {
+  const { statuses, currentStatusIndex, isTracking } = useLoadStatusStore();
+  
+  if (!isTracking && currentStatusIndex < 0) {
+    return null;
   }
-    
+  
+  const isComplete = !isTracking && currentStatusIndex === statuses.length - 1;
+  
+  // Calculate progress percentage
+  const progress = isComplete ? 1 : (currentStatusIndex + 1) / statuses.length;
+  const screenWidth = Dimensions.get('window').width;
+  const progressWidth = screenWidth * progress;
+  
   return (
-      <View style={styles.container}>
-      {statuses.map((status, index) => (
-        <View key={status} style={styles.statusItem}>
-          <Text
-            style={[
-              styles.statusText,
-              index === currentStatusIndex ? styles.activeStatusText : styles.inactiveStatusText
-            ]}
-          >
-            {status}
-          </Text>
-          {index === currentStatusIndex && <View style={styles.activeIndicator} />}
-        </View>
-      ))}
+    <View style={[styles.container]}>
+      {/* Progress bar */}
+      <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBar, { width: progressWidth }]} />
+      </View>
+      
+      {/* Status steps */}
+      <View style={styles.stepsContainer}>
+        {statuses.map((status, index) => {
+
+          const isActive = index === currentStatusIndex;
+          const isCompleted = index < currentStatusIndex || (isComplete && index === currentStatusIndex);
+          
+          return (
+            <View key={status} style={styles.step}>
+              <View style={[
+                styles.stepCircle,
+                isActive && styles.activeCircle,
+                isCompleted && styles.completedCircle
+              ]}>
+                {isCompleted ? (
+                  <Text style={styles.checkmarkText}>✓</Text>
+                ) : (
+                  <Text style={[
+                    styles.stepNumber,
+                    isActive && styles.activeText
+                  ]}>
+                    {index + 1}
+                  </Text>
+                )}
+              </View>
+              
+              <Text 
+                style={[
+                  styles.stepText,
+                  isActive && styles.activeText,
+                  isCompleted && styles.completedText
+                ]}
+                numberOfLines={1}
+              >
+                {status}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+      
+      {/* Progress status */}
+      <View style={styles.progressTextContainer}>
+        <Text style={styles.progressText}>
+          {isComplete ? 'Complete' : `Step ${currentStatusIndex + 1} of ${statuses.length}`}
+        </Text>
+      </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    paddingBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 3,
+    marginBottom: 10
+  },
+  progressBarContainer: {
+    height: 4,
+    backgroundColor: '#f0f0f0',
+    marginHorizontal: 15,
+    borderRadius: 2,
+    overflow: 'hidden'
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    borderRadius: 2
+  },
+  stepsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    paddingHorizontal: 10,
+    marginTop: 12
+  },
+  step: {
+    flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
-    marginTop: 50,
-    paddingHorizontal: 5,
-    backgroundColor: '#e0e0e0', 
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
-    marginBottom: 10 
+    paddingHorizontal: 4
   },
-  statusItem: {
+  stepCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: 'center',
-    paddingHorizontal: 5 
+    justifyContent: 'center',
+    marginBottom: 4,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0'
   },
-  statusText: {
-    fontSize: 12, 
-    textAlign: 'center'
+  activeCircle: {
+    borderColor: '#4CAF50',
   },
-  activeStatusText: {
-    fontWeight: 'bold',
-    color: '#007bff'
+  completedCircle: {
+    backgroundColor: '#4CAF50',
+    borderWidth: 0
   },
-  inactiveStatusText: {
-    color: '#6c757d'
+  stepNumber: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#9E9E9E'
   },
-  activeIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#007bff',
-    marginTop: 4
+  stepText: {
+    fontSize: 11,
+    textAlign: 'center',
+    paddingHorizontal: 2,
+    color: '#9E9E9E'
+  },
+  activeText: {
+    fontWeight: '600',
+    color: '#4CAF50'
+  },
+  completedText: {
+    color: '#4CAF50'
+  },
+  checkmarkText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  progressTextContainer: {
+    alignItems: 'center',
+    marginTop: 8
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#757575',
+    fontWeight: '500'
   }
-}) 
+});

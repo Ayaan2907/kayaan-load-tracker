@@ -1,6 +1,7 @@
-import { useLoadStatusStore } from '@/src/store/loadStatusStore';
+import { useLoadStatusStore } from '@/store/loadStatusStore';
 import React from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from './StatusBar';
 
 interface ScreenWrapperProps {
@@ -8,21 +9,30 @@ interface ScreenWrapperProps {
 }
 
 export function ScreenWrapper ({ children }: ScreenWrapperProps) {
-  const { startTracking, completeLoad, isTracking } = useLoadStatusStore()
+  const { startTracking, completeLoad, isTracking } = useLoadStatusStore();
+  const insets = useSafeAreaInsets();
+  
+  // Calculate bottom padding to account for tab bar height + safe area
+  const bottomPadding = Platform.OS === 'ios' ? insets.bottom + 50 : 15;
 
   return (
     <View style={styles.wrapper}>
       <StatusBar />
-      <View style={[styles.buttonContainer]}>
+      <View style={styles.content}>
+        {children}
+      </View>
+      <View 
+        style={[
+          styles.buttonContainer,
+          { paddingBottom: bottomPadding }
+        ]}
+      >
         {!isTracking && (
             <Button title='Start Tracking' onPress={startTracking} />
         )}
         {isTracking && (
             <Button title='Complete Load' onPress={completeLoad} color='green' />
         )}
-      </View>
-      <View style={styles.content}>
-        {children}
       </View>
     </View>
   )
@@ -31,7 +41,6 @@ export function ScreenWrapper ({ children }: ScreenWrapperProps) {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    // Allow content to determine alignment, remove alignItems/justifyContent
     backgroundColor: '#f0f0f0' // Keep consistent background
   },
   buttonContainer: {
@@ -39,14 +48,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 60,
-    marginVertical: 15,
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 15
   },
   content: {
     flex: 1,
-    padding: 20
   }
-}) 
+})

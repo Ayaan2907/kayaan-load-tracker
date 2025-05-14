@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { useAuthStore } from '@/src/store/authStore';
+import { useAuthStore } from '@/store/authStore';
 
 // temporary login screen
 // TODO: improve the whole UI 

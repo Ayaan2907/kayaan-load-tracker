@@ -1,5 +1,5 @@
 import { ScreenWrapper } from '@/components/ScreenWrapper'
-import { useAuthStore } from '@/src/store/authStore'
+import { useAuthStore } from '@/store/authStore'
 import React from 'react'
 import { Button, StyleSheet, Text, View } from 'react-native'
 

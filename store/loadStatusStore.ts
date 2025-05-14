@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { LOAD_STATUSES, STATUS_UPDATE_INTERVAL } from '../utils/constants'
+import { LOAD_STATUSES, STATUS_UPDATE_INTERVAL } from '@/constants/StatusConstants'
 
 interface LoadStatusState {
   statuses: readonly string[] // Use readonly tuple from constants
