@@ -5,6 +5,7 @@ import { SplashScreen, Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import '../global.css';
 
 // Preventing the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
