@@ -1,14 +1,27 @@
 import { useLoadStatusStore } from '@/store/loadStatusStore';
-import React from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Dimensions, Text, View } from 'react-native';
 
 export function StatusBar() {
   const { statuses, currentStatusIndex, currentStatusProgress, isTracking } = useLoadStatusStore();
-  const screenWidth = Dimensions.get('window').width;
+  // const screenWidth = Dimensions.get('window').width;
   
   const totalProgress = (currentStatusIndex + currentStatusProgress) / statuses.length;
   
   const isComplete = !isTracking && currentStatusIndex === statuses.length - 1;
+
+  // Animation for the status text
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500, 
+      useNativeDriver: true, 
+    }).start();
+  }, [currentStatusIndex, isComplete, fadeAnim]);
+
   if (!isTracking && !isComplete) return null;
 
   return (
@@ -22,9 +35,12 @@ export function StatusBar() {
       
       {/* Current status label */}
       <View className="items-center mt-3">
-        <Text className="text-base font-medium text-green-600 dark:text-green-400">
+        <Animated.Text 
+          style={{ opacity: fadeAnim }} 
+          className="text-base font-medium text-green-600 dark:text-green-400"
+        >
           {isComplete ? 'Complete' : statuses[currentStatusIndex]}
-        </Text>
+        </Animated.Text>
         <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {isComplete ? 'All steps completed' : `Step ${currentStatusIndex + 1} of ${statuses.length}`}
         </Text>
