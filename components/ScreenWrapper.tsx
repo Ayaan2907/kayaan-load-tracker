@@ -1,6 +1,6 @@
 import { useLoadStatusStore } from '@/store/loadStatusStore';
 import React from 'react';
-import { Button, Platform, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from './StatusBar';
 
@@ -12,8 +12,8 @@ export function ScreenWrapper ({ children }: ScreenWrapperProps) {
   const { startTracking, completeLoad, isTracking } = useLoadStatusStore();
   const insets = useSafeAreaInsets();
   
-  // Calculate bottom padding to account for tab bar height + safe area
-  const bottomPadding = Platform.OS === 'ios' ? insets.bottom + 50 : 15;
+
+  const bottomPadding = Platform.OS === 'ios' ? insets.bottom  : 15;
 
   return (
     <View className="flex-1 bg-gray-100 dark:bg-neutral-800">
@@ -28,10 +28,20 @@ export function ScreenWrapper ({ children }: ScreenWrapperProps) {
         className="flex-row justify-center items-center min-h-[60px] dark:bg-neutral-800"
       >
         {!isTracking && (
-            <Button title='Start Tracking' onPress={startTracking} />
+          <Pressable
+            onPress={startTracking}
+            className="bg-blue-500  px-6 py-3 rounded-full shadow-sm active:opacity-80"
+          >
+            <Text className="text-white font-semibold text-base">Start Tracking</Text>
+          </Pressable>
         )}
         {isTracking && (
-            <Button title='Complete Load' onPress={completeLoad} color='green' />
+          <Pressable
+            onPress={completeLoad}
+            className="bg-green-500  px-6 py-3 rounded-full shadow-sm active:opacity-80"
+          >
+            <Text className="text-white font-semibold text-base">Complete Load</Text>
+          </Pressable>
         )}
       </View>
     </View>
