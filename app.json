@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "react-native-assignment-kayaan",
-    "slug": "react-native-assignment-kayaan",
+    "slug": "kayaanai-react-native-assignment",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,14 +9,19 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ayaan2907.kayaanaireactnativeassignment",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.ayaan2907.kayaanaireactnativeassignment"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +42,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dd478382-555e-4325-8a25-268ab1bdc4ed"
+      }
+    },
+    "owner": "ayaan2907"
   }
 }
